@@ -88,6 +88,8 @@ cd stellar-build
 cp .env.docker.example .env
 ```
 
+Replace `wallet.example.com` in `.env` with your deployment hostname, including `DOMAIN`, `PUBLIC_BASE_URL`, and `ALLOWED_HOSTS`. For host Nginx, also replace it in the example server configuration.
+
 Fill `.env` with real secrets:
 
 ```bash

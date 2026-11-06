@@ -120,8 +120,8 @@ export function loadConfig(env = process.env) {
       throw new Error('Invalid configuration: PUBLIC_BASE_URL must use https in production');
     }
 
-    if (publicBaseUrl.hostname !== 'wallet.example.com') {
-      throw new Error('Invalid configuration: PUBLIC_BASE_URL hostname must be wallet.example.com');
+    if (!allowedHosts.includes(publicBaseUrl.hostname)) {
+      throw new Error('Invalid configuration: PUBLIC_BASE_URL hostname must be included in ALLOWED_HOSTS');
     }
 
     if (values.APP_WEBHOOK_URL && new URL(values.APP_WEBHOOK_URL).protocol !== 'https:') {

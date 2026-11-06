@@ -8,10 +8,10 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      PUBLIC_BASE_URL: https://wallet.example.com
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?PUBLIC_BASE_URL is required}
       TRUST_PROXY: "true"
       REQUIRE_HTTPS: "true"
-      ALLOWED_HOSTS: wallet.example.com
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?ALLOWED_HOSTS is required}
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_SSL: "false"
@@ -26,7 +26,7 @@ services:
           "CMD",
           "node",
           "-e",
-          "const http=require('node:http');const req=http.get({host:'127.0.0.1',port:3000,path:'/health',headers:{Host:'wallet.example.com','X-Forwarded-Proto':'https'}},res=>{res.resume();process.exit(res.statusCode>=200&&res.statusCode<400?0:1)});req.on('error',()=>process.exit(1));"
+          "const http=require('node:http');const req=http.get({host:'127.0.0.1',port:3000,path:'/health',headers:{Host:new URL(process.env.PUBLIC_BASE_URL).hostname,'X-Forwarded-Proto':'https'}},res=>{res.resume();process.exit(res.statusCode>=200&&res.statusCode<400?0:1)});req.on('error',()=>process.exit(1));"
         ]
       interval: 30s
       timeout: 10s
@@ -63,7 +63,7 @@ services:
       app:
         condition: service_healthy
     environment:
-      DOMAIN: wallet.example.com
+      DOMAIN: ${DOMAIN:-wallet.example.com}
     ports:
       - "80:80"
       - "443:443"

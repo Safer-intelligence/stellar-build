@@ -31,3 +31,18 @@ test('loadConfig requires a 32-byte base64 encryption key', () => {
     /WALLET_ENCRYPTION_KEY/
   );
 });
+
+test('production accepts a configured deployment hostname and rejects a mismatch', () => {
+  const env = {
+    NODE_ENV: 'production',
+    TREASURY_SECRET: Keypair.random().secret(),
+    API_KEY: 'a'.repeat(32),
+    WALLET_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'),
+    MYSQL_PASSWORD: 'b'.repeat(32),
+    MYSQL_HOST: 'mysql',
+    PUBLIC_BASE_URL: 'https://service.example.org',
+    ALLOWED_HOSTS: 'service.example.org'
+  };
+  assert.equal(loadConfig(env).publicBaseUrl, 'https://service.example.org');
+  assert.throws(() => loadConfig({ ...env, ALLOWED_HOSTS: 'other.example.org' }), /ALLOWED_HOSTS/);
+});
